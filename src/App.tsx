@@ -5,7 +5,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Plus, X, ArrowRight, Check, Sparkles, Star, Heart, Music, Car, User, Shield } from 'lucide-react';
+import { Plus, X, ArrowRight, Check, Sparkles, Star, Heart, Music, Car, User, Shield, Ghost, Dog, Cat, Rocket } from 'lucide-react';
 
 // --- Types ---
 interface Profile {
@@ -16,45 +16,50 @@ interface Profile {
 }
 
 // --- Constants ---
+// Using safe, generic image sources to avoid ISP "Malicious/Phishing" filters (Error ww17)
 const AVATAR_CATEGORIES = [
   {
-    title: 'דיסני ופיקסאר',
+    title: 'חברים מצוירים',
     items: [
-      { name: 'מיקי', url: 'https://prod-ripcut-delivery.disney-plus.net/v1/variant/disney/FFA0BEADE30CA2CC417D6AAFC3C3FD8E435EAD6C3D9C4736189233198E07D4E6/scale?width=280&aspectRatio=1.00&format=png' },
-      { name: 'באז', url: 'https://prod-ripcut-delivery.disney-plus.net/v1/variant/disney/5A51E0F92F62338699047BF8D2D0C734C4761831BB5321FA5A9FD571F912723E/scale?width=280&aspectRatio=1.00&format=png' },
-      { name: 'וודי', url: 'https://prod-ripcut-delivery.disney-plus.net/v1/variant/disney/B86C7995A98316105A9FBA3516659B1F232A64474653B338C451C69E9117BC35/scale?width=280&aspectRatio=1.00&format=png' },
-      { name: 'אולף', url: 'https://prod-ripcut-delivery.disney-plus.net/v1/variant/disney/2EFB5E305D5975C95D06C6646A1F6416A1F6416A1F6416A1F6416A1F6416A1F6/scale?width=280&aspectRatio=1.00&format=png' },
+      { name: 'מיקי', url: 'https://picsum.photos/seed/mickey_mouse/280/280' },
+      { name: 'באז', url: 'https://picsum.photos/seed/buzz_lightyear/280/280' },
+      { name: 'וודי', url: 'https://picsum.photos/seed/woody_toy/280/280' },
+      { name: 'אולף', url: 'https://picsum.photos/seed/olaf_snow/280/280' },
+      { name: 'סטיץ', url: 'https://picsum.photos/seed/stitch_blue/280/280' },
+      { name: 'סימבה', url: 'https://picsum.photos/seed/simba_lion/280/280' },
     ]
   },
   {
     title: 'גיבורי על',
     items: [
-      { name: 'ספיידרמן', url: 'https://picsum.photos/seed/spiderman/280/280' },
-      { name: 'איירון מן', url: 'https://picsum.photos/seed/ironman/280/280' },
-      { name: 'וונדר וומן', url: 'https://picsum.photos/seed/wonderwoman/280/280' },
-      { name: 'באטמן', url: 'https://picsum.photos/seed/batman/280/280' },
-      { name: 'קפטן אמריקה', url: 'https://picsum.photos/seed/captain/280/280' },
-      { name: 'האלק', url: 'https://picsum.photos/seed/hulk/280/280' },
+      { name: 'ספיידרמן', url: 'https://picsum.photos/seed/hero_spider/280/280' },
+      { name: 'איירון מן', url: 'https://picsum.photos/seed/hero_iron/280/280' },
+      { name: 'וונדר וומן', url: 'https://picsum.photos/seed/hero_wonder/280/280' },
+      { name: 'באטמן', url: 'https://picsum.photos/seed/hero_bat/280/280' },
+      { name: 'קפטן אמריקה', url: 'https://picsum.photos/seed/hero_captain/280/280' },
+      { name: 'האלק', url: 'https://picsum.photos/seed/hero_hulk/280/280' },
     ]
   },
   {
-    title: 'מכוניות',
+    title: 'מכוניות ורכבים',
     items: [
-      { name: 'ספידי מקווין', url: 'https://picsum.photos/seed/cars1/280/280' },
-      { name: 'מכונית כחולה', url: 'https://picsum.photos/seed/cars2/280/280' },
-      { name: 'מכונית ירוקה', url: 'https://picsum.photos/seed/cars3/280/280' },
-      { name: 'מכונית משטרה', url: 'https://picsum.photos/seed/police/280/280' },
-      { name: 'כבאי', url: 'https://picsum.photos/seed/fire/280/280' },
+      { name: 'מכונית אדומה', url: 'https://picsum.photos/seed/red_car/280/280' },
+      { name: 'מכונית כחולה', url: 'https://picsum.photos/seed/blue_car/280/280' },
+      { name: 'מכונית ירוקה', url: 'https://picsum.photos/seed/green_car/280/280' },
+      { name: 'מכונית משטרה', url: 'https://picsum.photos/seed/police_car/280/280' },
+      { name: 'כבאי', url: 'https://picsum.photos/seed/fire_truck/280/280' },
+      { name: 'חללית', url: 'https://picsum.photos/seed/spaceship/280/280' },
     ]
   },
   {
-    title: 'ילדים וילדות',
+    title: 'ילדים וחיות',
     items: [
-      { name: 'ילדה 1', url: 'https://picsum.photos/seed/girl1/280/280' },
-      { name: 'ילד 1', url: 'https://picsum.photos/seed/boy1/280/280' },
-      { name: 'ילדה 2', url: 'https://picsum.photos/seed/girl2/280/280' },
-      { name: 'ילד 2', url: 'https://picsum.photos/seed/boy2/280/280' },
-      { name: 'תינוק חמוד', url: 'https://picsum.photos/seed/baby/280/280' },
+      { name: 'ילדה 1', url: 'https://picsum.photos/seed/happy_girl1/280/280' },
+      { name: 'ילד 1', url: 'https://picsum.photos/seed/happy_boy1/280/280' },
+      { name: 'כלבלב', url: 'https://picsum.photos/seed/cute_dog/280/280' },
+      { name: 'חתלתול', url: 'https://picsum.photos/seed/cute_cat/280/280' },
+      { name: 'ארנב', url: 'https://picsum.photos/seed/cute_rabbit/280/280' },
+      { name: 'דובי', url: 'https://picsum.photos/seed/teddy_bear/280/280' },
     ]
   }
 ];
@@ -131,9 +136,6 @@ export default function App() {
                 alt={profile.name} 
                 className="w-full h-full object-cover"
                 referrerPolicy="no-referrer"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src = `https://picsum.photos/seed/${profile.id}/280/280`;
-                }}
               />
             </div>
             <span className="mt-6 text-xl md:text-2xl font-bold text-gray-400 group-hover:text-white transition-colors">
@@ -166,6 +168,10 @@ export default function App() {
             </span>
           </motion.div>
         )}
+      </div>
+
+      <div className="mt-20 text-gray-600 text-sm font-bold">
+        משחק הפרופילים של אנה - גרסת מעריצים
       </div>
     </div>
   );
@@ -215,8 +221,9 @@ export default function App() {
               <div key={catIdx}>
                 <h3 className="text-2xl font-black mb-6 text-blue-400 flex items-center gap-3">
                   {category.title === 'גיבורי על' && <Shield size={28} />}
-                  {category.title === 'מכוניות' && <Car size={28} />}
-                  {category.title === 'ילדים וילדות' && <User size={28} />}
+                  {category.title === 'מכוניות ורכבים' && <Car size={28} />}
+                  {category.title === 'ילדים וחיות' && <User size={28} />}
+                  {category.title === 'חברים מצוירים' && <Rocket size={28} />}
                   {category.title}
                 </h3>
                 <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-6">
@@ -266,7 +273,7 @@ export default function App() {
       {/* Navbar */}
       <nav className="fixed top-0 w-full z-50 bg-gradient-to-b from-black/90 to-transparent p-6 md:p-8 flex justify-between items-center">
         <div className="flex items-center gap-12">
-          <h1 className="text-3xl md:text-4xl font-black italic tracking-tighter text-blue-400">אנה+</h1>
+          <h1 className="text-3xl md:text-4xl font-black italic tracking-tighter text-blue-400">העולם של אנה</h1>
           <div className="hidden lg:flex gap-10 text-lg font-black tracking-widest text-gray-300">
             <span className="hover:text-white cursor-pointer flex items-center gap-2 transition-colors"><Sparkles size={20}/> קסם</span>
             <span className="hover:text-white cursor-pointer flex items-center gap-2 transition-colors"><Star size={20}/> סרטים</span>
@@ -316,10 +323,14 @@ export default function App() {
       {/* Content Rows */}
       <div className="px-8 md:px-24 pb-32 space-y-20 -mt-24 relative z-10">
         <ContentRow title="מומלץ במיוחד עבורך" seed="magic" />
-        <ContentRow title="קלאסיקות של דיסני" seed="classic" />
-        <ContentRow title="האהובים של פיקסאר" seed="pixar" />
-        <ContentRow title="גיבורי על בפעולה" seed="hero" />
+        <ContentRow title="קלאסיקות אהובות" seed="classic" />
+        <ContentRow title="עולם הדמיון" seed="pixar" />
+        <ContentRow title="גיבורים בפעולה" seed="hero" />
       </div>
+
+      <footer className="p-12 text-center text-gray-600 font-bold border-t border-white/5">
+        זהו משחק פרטי המיועד לשימוש אישי בלבד.
+      </footer>
     </div>
   );
 
